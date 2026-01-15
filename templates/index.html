@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title><!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI | Minimal</title>
+    <style>
+        :root {
+            --bg-color: #0a0a0a;
+            --text-color: #ededed;
+            --accent-color: #333;
+            --input-bg: #1a1a1a;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+            overflow: hidden;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 650px;
+            padding: 20px;
+            text-align: center;
+        }
+
+        h1 {
+            font-weight: 500;
+            font-size: 1.5rem;
+            margin-bottom: 2rem;
+            letter-spacing: -0.02em;
+            opacity: 0.9;
+        }
+
+        .input-wrapper {
+            position: relative;
+            background: var(--input-bg);
+            border: 1px solid var(--accent-color);
+            border-radius: 12px;
+            padding: 12px 16px;
+            display: flex;
+            align-items: center;
+            transition: border 0.2s ease;
+        }
+
+        .input-wrapper:focus-within {
+            border-color: #666;
+        }
+
+        textarea {
+            background: transparent;
+            border: none;
+            color: var(--text-color);
+            width: 100%;
+            resize: none;
+            font-size: 1rem;
+            outline: none;
+            font-family: inherit;
+            line-height: 1.5;
+            max-height: 200px;
+        }
+
+        .send-btn {
+            background: #fff;
+            color: #000;
+            border: none;
+            border-radius: 50%;
+            width: 32px;
+            height: 32px;
+            cursor: pointer;
+            margin-left: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: opacity 0.2s;
+        }
+
+        .send-btn:hover {
+            opacity: 0.8;
+        }
+
+        .footer-links {
+            margin-top: 2rem;
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            opacity: 0.4;
+            font-size: 0.8rem;
+        }
+
+        a { color: inherit; text-decoration: none; }
+        a:hover { opacity: 0.7; }
+
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1>How can I help you today?</h1>
+        
+        <div class="input-wrapper">
+            <textarea placeholder="Message AI..." rows="1" id="ai-input"></textarea>
+            <button class="send-btn">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>
+            </button>
+        </div>
+
+        <div class="footer-links">
+            <a href="#">Capabilities</a>
+            <a href="#">Privacy</a>
+            <a href="#">History</a>
+        </div>
+    </div>
+
+    <script>
+        const tx = document.getElementById('ai-input');
+        tx.addEventListener("input", function() {
+            this.style.height = "auto";
+            this.style.height = (this.scrollHeight) + "px";
+        }, false);
+    </script>
+
+</body>
+</html></title>
+</head>
+<body>
+
+</body>
+</html>

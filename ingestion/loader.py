@@ -16,7 +16,6 @@ def load_hface() -> List[Dict]:
     row.keys()
     for idx, row in enumerate(dataset_split):
         text = row.get("instruction")
-
         if not text or not text.strip():
             continue
 
@@ -29,6 +28,8 @@ def load_hface() -> List[Dict]:
                 "row_id": idx
             }
         })
+
+
     return hfacedoc
 def load_pdf() -> List[Dict]:
     documents = []
