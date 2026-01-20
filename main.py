@@ -2,6 +2,7 @@ from fastapi import FastAPI, Request
 from ingestion.loader import load_pdf, load_hface
 from fastapi.templating import Jinja2Templates
 from fastapi.staticfiles import StaticFiles
+from fastapi.responses import JSONResponse
 
 app = FastAPI()
 
@@ -27,3 +28,13 @@ def myre(request: Request):
 @app.get("/hello/{name}")
 async def say_hello(name: str):
     return {"message": f"Hello {name}"}
+
+@app.post("/ask")
+async def ask(request: Request):
+    body = await request.json()
+    print("Received Request : ", body)
+    return JSONResponse(
+        content ={
+        "status": "received",
+        "data": body
+    })

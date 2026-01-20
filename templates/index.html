@@ -112,7 +112,7 @@
         
         <div class="input-wrapper">
             <textarea placeholder="Message AI..." rows="1" id="ai-input"></textarea>
-            <button class="send-btn">
+            <button class="send-btn" onclick="sendquery()">
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>
             </button>
         </div>
@@ -130,12 +130,26 @@
             this.style.height = "auto";
             this.style.height = (this.scrollHeight) + "px";
         }, false);
-    </script>
+        myre =  document.getElementById("ai-input")
+        function sendquery() {
+            const myre = document.getElementById("ai-input").value;
 
-</body>
-</html></title>
-</head>
-<body>
+            fetch("/ask", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                    query: myre
+                })
+            })
+            .then(res => res.json())
+            .then(data => {
+                console.log(data);
+            });
+        }
+
+    </script>
 
 </body>
 </html>
