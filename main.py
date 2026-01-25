@@ -4,6 +4,7 @@ from fastapi.templating import Jinja2Templates
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import JSONResponse
 from google import genai
+from ingestion.mkc import load_mkc, load_kms
 import os
 
 app = FastAPI()
@@ -23,6 +24,13 @@ def get_documents():
 def get_hface():
     return load_hface()
 
+@app.get("/zizou")
+def get_zizou():
+    return load_mkc()
+
+@app.get("/pizou")
+def get_zizou():
+    return load_kms()
 
 @app.get("/")
 async def root():

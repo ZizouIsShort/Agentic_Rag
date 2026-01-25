@@ -3,24 +3,32 @@ from pypdf import PdfReader
 from typing import List, Dict
 from datasets import load_dataset
 
+
 DATA_DIR = Path("data/raw")
 
 
-def load_hface() -> List[Dict]:
+def load_hface(limit: int = 2) -> List[Dict]:
     ds = load_dataset("SustcZhangYX/ChatEnv")
-    hfacedoc = []
     dataset_split = ds["train"]
-    print(dataset_split[0])
-    print(dataset_split[0].keys())
-    row = dataset_split[0]
-    row.keys()
+
+    hfacedoc = []
+    count = 0
+
     for idx, row in enumerate(dataset_split):
-        text = row.get("instruction")
-        if not text or not text.strip():
+        question = row.get("instruction")
+        answer = row.get("output")
+
+        if not question or not answer:
+            continue
+
+        question = question.strip()
+        answer = answer.strip()
+
+        if not question or not answer:
             continue
 
         hfacedoc.append({
-            "text": text.strip(),
+            "text": f"Question:\n{question}\n\nAnswer:\n{answer}",
             "metadata": {
                 "source_type": "huggingface",
                 "dataset": "SustcZhangYX/ChatEnv",
@@ -29,8 +37,12 @@ def load_hface() -> List[Dict]:
             }
         })
 
+        count += 1
+        if count >= limit:
+            break
 
     return hfacedoc
+
 def load_pdf() -> List[Dict]:
     documents = []
     for pdf in DATA_DIR.glob("*.pdf"):
