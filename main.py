@@ -7,6 +7,7 @@ from google import genai
 from ingestion.mkc import load_mkc, load_kms
 import os
 from ingestion.embedding import load_embeddings
+from ingestion.retrieval import retrieve_top_chunks
 
 app = FastAPI()
 
@@ -92,8 +93,23 @@ async def ask(request: Request):
     print("PAUSE")
     print(result1)
 
+    embedded_query = result1.embeddings[0].values
+
+    final_data = load_embeddings()
+
+    top_chunks = retrieve_top_chunks(embedded_query, final_data, top_k=5, min_score=0.2)
+    build_context = top_chunks
+
+    print("atb ziyan")
+
+    print(build_context)
+
+    print("works")
+
     return JSONResponse(
         content={
             "status": "received",
             "data": body
         })
+
+
