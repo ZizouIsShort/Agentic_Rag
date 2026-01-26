@@ -43,14 +43,17 @@ def load_hface(limit: int = 2) -> List[Dict]:
 
     return hfacedoc
 
-def load_pdf() -> List[Dict]:
+
+def load_pdf(limit: int = 2) -> List[Dict]:
     documents = []
     for pdf in DATA_DIR.glob("*.pdf"):
         reader = PdfReader(pdf)
 
         for page_number, page in enumerate(reader.pages, start=1):
-            text = page.extract_text()
+            if len(documents) >= limit:
+                return documents
 
+            text = page.extract_text()
             if not text or not text.strip():
                 continue
 
