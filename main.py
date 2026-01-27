@@ -8,6 +8,7 @@ from ingestion.mkc import load_mkc, load_kms
 import os
 from ingestion.embedding import load_embeddings
 from ingestion.retrieval import retrieve_top_chunks
+from ingestion.context import build_context
 
 app = FastAPI()
 
@@ -86,25 +87,39 @@ async def ask(request: Request):
         model="gemini-embedding-001",
         contents=query
     )
-    response = client.models.generate_content(
-        model="gemini-3-flash-preview", contents=query
-    )
-    print(response.text)
-    print("PAUSE")
-    print(result1)
 
     embedded_query = result1.embeddings[0].values
 
     final_data = load_embeddings()
 
     top_chunks = retrieve_top_chunks(embedded_query, final_data, top_k=5, min_score=0.2)
-    build_context = top_chunks
+    final_context = build_context(top_chunks)
 
     print("atb ziyan")
 
-    print(build_context)
+    print(final_context)
 
     print("works")
+
+    final_prompt = f"""
+    You are a question-answering assistant.
+
+    RULES:
+    - Answer ONLY using the provided context.
+    - If the answer is not present in the context, say:
+      "I don't know based on the provided context."
+
+    CONTEXT:
+    {final_context}
+
+    QUESTION:
+    {query}
+    """
+
+    response = client.models.generate_content(
+        model="gemini-3-flash-preview", contents=final_prompt
+    )
+    print(response.text)
 
     return JSONResponse(
         content={
