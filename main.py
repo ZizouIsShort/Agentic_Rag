@@ -110,6 +110,47 @@ async def ask(request: Request):
             "sources": []
         })
 
+    seen_sources = set()
+    sources = []
+
+    seen_sources = set()
+    sources = []
+
+    for chunk in top_chunks:
+        meta = chunk["metadata"]
+        source_type = meta.get("source_type")
+
+        if source_type == "pdf":
+            filename = meta.get("filename")
+            page = meta.get("page_number")
+
+            key = ("pdf", filename, page)
+
+            source_entry = {
+                "source_type": "pdf",
+                "filename": filename,
+                "page": page
+            }
+
+        elif source_type == "huggingface":
+            dataset = meta.get("dataset")
+            row_id = meta.get("row_id")
+
+            key = ("huggingface", dataset, row_id)
+
+            source_entry = {
+                "source_type": "huggingface",
+                "dataset": dataset,
+                "row_id": row_id
+            }
+
+        else:
+            continue
+
+        if key not in seen_sources:
+            seen_sources.add(key)
+            sources.append(source_entry)
+
     final_context = build_context(top_chunks)
 
     print("atb ziyan")
@@ -140,8 +181,13 @@ async def ask(request: Request):
 
     return JSONResponse(
         content={
-            "status": "received",
-            "data": body
-        })
+            "query": query,
+            "answer": response.text,
+            "similarity_score": best_score,
+            "sources": sources
+        }
+    )
+
+
 
 
