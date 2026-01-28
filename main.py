@@ -93,6 +93,23 @@ async def ask(request: Request):
     final_data = load_embeddings()
 
     top_chunks = retrieve_top_chunks(embedded_query, final_data, top_k=5, min_score=0.2)
+
+    if not top_chunks:
+        print("No chunks found")
+        return JSONResponse({
+            "answer": "no clue based on the provided context",
+            "sources": []
+        })
+
+    best_score = top_chunks[0]["score"]
+    print("Best Score : ", best_score)
+    if best_score < 0.5:
+        print("No chunks found here")
+        return JSONResponse({
+            "answer": "no clue based on the provided context",
+            "sources": []
+        })
+
     final_context = build_context(top_chunks)
 
     print("atb ziyan")
