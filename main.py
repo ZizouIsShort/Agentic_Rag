@@ -113,9 +113,6 @@ async def ask(request: Request):
     seen_sources = set()
     sources = []
 
-    seen_sources = set()
-    sources = []
-
     for chunk in top_chunks:
         meta = chunk["metadata"]
         source_type = meta.get("source_type")
