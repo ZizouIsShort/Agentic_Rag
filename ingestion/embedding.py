@@ -10,20 +10,18 @@ def load_embeddings():
     all_chunks = load_mkc() + load_kms()
     embedded_chunks = []
 
-    for chunk in all_chunks:
-        text = chunk.get("text")
-        if not text:
-            continue
+    texts = [c["text"] for c in all_chunks if c.get("text")]
 
-        result = client.models.embed_content(
-            model="gemini-embedding-001",
-            contents=text
-        )
+    results = client.models.embed_content(
+        model="gemini-embedding-001",
+        contents=texts
+    )
 
+    for chunk, emb in zip(all_chunks, results.embeddings):
         embedded_chunks.append({
-            "text": text,
+            "text": chunk["text"],
             "metadata": chunk["metadata"],
-            "embedding": result.embeddings[0].values
+            "embedding": emb.values
         })
 
     return embedded_chunks

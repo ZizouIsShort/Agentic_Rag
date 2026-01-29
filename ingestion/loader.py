@@ -7,7 +7,7 @@ from datasets import load_dataset
 DATA_DIR = Path("data/raw")
 
 
-def load_hface(limit: int = 2) -> List[Dict]:
+def load_hface(limit: int = 1) -> List[Dict]:
     ds = load_dataset("SustcZhangYX/ChatEnv")
     dataset_split = ds["train"]
 
@@ -44,7 +44,7 @@ def load_hface(limit: int = 2) -> List[Dict]:
     return hfacedoc
 
 
-def load_pdf(limit: int = 2) -> List[Dict]:
+def load_pdf(limit: int = 10) -> List[Dict]:
     documents = []
     for pdf in DATA_DIR.glob("*.pdf"):
         reader = PdfReader(pdf)

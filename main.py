@@ -5,10 +5,19 @@ from fastapi.staticfiles import StaticFiles
 from fastapi.responses import JSONResponse
 from google import genai
 from ingestion.mkc import load_mkc, load_kms
-import os
 from ingestion.embedding import load_embeddings
-from ingestion.retrieval import retrieve_top_chunks
 from ingestion.context import build_context
+from ingestion.finalWalaData import mkbfinal_data
+from ingestion.upsert import run_upsert
+from pinecone import Pinecone
+import os
+from dotenv import load_dotenv
+load_dotenv()
+
+myren = os.getenv("myren")
+pc = Pinecone(api_key=myren)
+index = pc.Index("killme")
+NAMESPACE = "rag-data"
 
 app = FastAPI()
 
@@ -22,6 +31,10 @@ GOOGLE_API_KEY = os.getenv("ZizouRAG")
 def get_documents():
     return load_pdf()
 
+
+@app.get("/imdonebye")
+def get_imdonebye():
+    return run_upsert()
 
 @app.get("/bed")
 def get_bed():
@@ -82,29 +95,40 @@ async def ask(request: Request):
     body = await request.json()
     query = body.get("query")
     print("Received Request : ", query)
+
     client = genai.Client(api_key=GOOGLE_API_KEY)
+
     result1 = client.models.embed_content(
         model="gemini-embedding-001",
         contents=query
     )
-
     embedded_query = result1.embeddings[0].values
 
-    final_data = load_embeddings()
+    results = index.query(
+        vector=embedded_query,
+        top_k=5,
+        include_metadata=True,
+        namespace="rag-data"
+    )
 
-    top_chunks = retrieve_top_chunks(embedded_query, final_data, top_k=5, min_score=0.2)
-
-    if not top_chunks:
-        print("No chunks found")
+    if not results.matches:
         return JSONResponse({
             "answer": "no clue based on the provided context",
             "sources": []
         })
 
+    top_chunks = []
+    for match in results.matches:
+        top_chunks.append({
+            "text": match.metadata["text"],
+            "metadata": match.metadata,
+            "score": match.score
+        })
+
     best_score = top_chunks[0]["score"]
-    print("Best Score : ", best_score)
+    print("Best Score:", best_score)
+
     if best_score < 0.5:
-        print("No chunks found here")
         return JSONResponse({
             "answer": "no clue based on the provided context",
             "sources": []
@@ -118,27 +142,19 @@ async def ask(request: Request):
         source_type = meta.get("source_type")
 
         if source_type == "pdf":
-            filename = meta.get("filename")
-            page = meta.get("page_number")
-
-            key = ("pdf", filename, page)
-
+            key = ("pdf", meta.get("filename"), meta.get("page_number"))
             source_entry = {
                 "source_type": "pdf",
-                "filename": filename,
-                "page": page
+                "filename": meta.get("filename"),
+                "page": meta.get("page_number")
             }
 
         elif source_type == "huggingface":
-            dataset = meta.get("dataset")
-            row_id = meta.get("row_id")
-
-            key = ("huggingface", dataset, row_id)
-
+            key = ("huggingface", meta.get("dataset"), meta.get("row_id"))
             source_entry = {
                 "source_type": "huggingface",
-                "dataset": dataset,
-                "row_id": row_id
+                "dataset": meta.get("dataset"),
+                "row_id": meta.get("row_id")
             }
 
         else:
@@ -149,13 +165,7 @@ async def ask(request: Request):
             sources.append(source_entry)
 
     final_context = build_context(top_chunks)
-
-    print("atb ziyan")
-
     print(final_context)
-
-    print("works")
-
     final_prompt = f"""
     You are a question-answering assistant.
 
@@ -172,10 +182,10 @@ async def ask(request: Request):
     """
 
     response = client.models.generate_content(
-        model="gemini-3-flash-preview", contents=final_prompt
+        model="gemini-3-flash-preview",
+        contents=final_prompt
     )
     print(response.text)
-
     return JSONResponse(
         content={
             "query": query,
@@ -186,5 +196,7 @@ async def ask(request: Request):
     )
 
 
+if __name__ == "__main__":
+    mkbfinal_data()
 
 
