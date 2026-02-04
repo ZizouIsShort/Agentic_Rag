@@ -1,0 +1,5 @@
+🚀 Robust RAG Pipeline: Context-Aware IntelligenceA complete, production-ready Retrieval-Augmented Generation (RAG) pipeline designed to provide factual, source-backed answers while strictly eliminating model hallucinations. This system ensures that the LLM only speaks when it has the data to back it up.
+
+🛠️ Tech StackComponentTechnologyLanguagePythonAPI FrameworkFastAPILLMGoogle Gemini (gemini-3-flash-preview)Embeddingsgemini-embedding-001Vector DatabasePineconeData SourcesPyPDF, HuggingFace DatasetsEnvironmentpython-dotenv
+
+🌟 Core FeaturesMulti-Source Ingestion: Seamlessly processes unstructured data from local PDFs and HuggingFace QA datasets.Smart Chunking: Splits large documents into overlapping segments to preserve semantic context across boundaries.Hallucination Guardrails: Enforces strict similarity thresholds. If the context doesn't match the query, the system refuses to "guess."Source Transparency: Every response includes the underlying similarity score and source metadata, allowing for easy auditing of the AI's logic.
